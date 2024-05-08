@@ -1,0 +1,21 @@
+name: Build & Push Python Redis App
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build and push image
+      uses: elgohr/Publish-Docker-Github-Action@master
+      with:
+        name: ghcr.io/hostspaceng/python_redis_app
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        registry: ghcr.io
+        tag_names: true
+        tag_semver: true
+        snapshot: true

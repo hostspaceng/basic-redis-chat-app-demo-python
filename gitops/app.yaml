@@ -22,6 +22,8 @@ spec:
     helm:
       releaseName: python-redis-app
       values: |
+        env:
+          REDIS_ENDPOINT_URL: redis-master.redis.svc.cluster.local:6379
         image:
           repository: ghcr.io/hostspaceng/python_redis_app
           tag: latest

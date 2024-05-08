@@ -16,8 +16,8 @@ spec:
     syncOptions:
       - CreateNamespace=true
   source:
-    repoURL: https://github.com/ionet-official/k8s-management-infra.git
-    path: charts/apps
+    repoURL: https://github.com/hostspaceng/generic-helm-chart.git
+    path: ./
     targetRevision: main
     helm:
       releaseName: python-redis-app

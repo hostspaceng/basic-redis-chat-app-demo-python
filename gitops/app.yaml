@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: python-redis-app
+  namespace: argocd
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: python-redis-app
+  project: default
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+      allowEmpty: true
+    syncOptions:
+      - CreateNamespace=true
+  source:
+    repoURL: https://github.com/ionet-official/k8s-management-infra.git
+    path: charts/apps
+    targetRevision: main
+    helm:
+      releaseName: python-redis-app
+      values: |
+        image:
+          repository: ghcr.io/hostspaceng/python_redis_app
+          tag: latest
+        container:
+          ports:
+            http: 5000
+        ingress:
+          enabled: true
+          className: "nginx"
+          annotations:
+            cert-manager.io/cluster-issuer: letsencrypt
+          hosts:
+            - host: app.cloud.hostspaceng.com
+              paths:
+                - path: /
+                  pathType: Prefix
+          tls:
+          - secretName: app-service-tls
+            hosts:
+              - app.cloud.hostspaceng.com

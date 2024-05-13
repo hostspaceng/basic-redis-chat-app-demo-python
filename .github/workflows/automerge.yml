@@ -1,0 +1,39 @@
+name: Auto Merge Pull Requests
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  auto_merge:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      # Install GitHub CLI
+      - name: Install GitHub CLI
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - run: npm install -g gh
+
+      # Fetch Pull Request Metadata
+      - name: Fetch Pull Request Metadata
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            console.log(`Pull Request #${pr.number}: ${pr.html_url}`);
+
+      # Approve Pull Request
+      - name: Approve Pull Request
+        run: gh pr review --approve "${{ github.event.pull_request.html_url }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Merge Pull Request
+      - name: Merge Pull Request
+        run: gh pr merge --auto "${{ github.event.pull_request.html_url }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
